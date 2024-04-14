@@ -33,3 +33,21 @@ If you want to create base templates, macros, etc. that are used in pages but ar
 For organization's sake, you can use the `./templates` directory for this. However, Galago does not care where you put them, and they can be placed anywhere.
 
 For example, you may have a `./pages/index.html` page that extends the `./templates/base.html` template and uses the `./templates/macros/user_details.html` macro.
+
+## Downloading
+
+You can find pre-built Galago binaries for Linux and Windows on the Galago repo's [releases page](https://github.com/jere-mie/galago/releases/latest) From there, you can download the binaries and add them to your system's PATH variable.
+
+If you prefer downloading via the cli, you can use the following command to download the latest Galago binary on **Windows**:
+
+```sh
+irm -Uri https://github.com/jere-mie/galago/releases/latest/download/galago.exe -O galago.exe
+```
+
+and the following command on **Linux**:
+
+```sh
+curl -LO https://github.com/jere-mie/galago/releases/latest/download/galago
+```
+
+Galago is a lightweight, static binary (under 10Mb), so if you prefer you can install it in your project's directory and run it with `./galago` instead of adding it to your PATH.
