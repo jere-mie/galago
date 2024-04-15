@@ -36,18 +36,30 @@ For example, you may have a `./pages/index.html` page that extends the `./templa
 
 ## Downloading
 
-You can find pre-built Galago binaries for Linux and Windows on the Galago repo's [releases page](https://github.com/jere-mie/galago/releases/latest) From there, you can download the binaries and add them to your system's PATH variable.
+You can find pre-built Galago binaries for Windows, Linux, and MacOS on the Galago repo's [releases page](https://github.com/jere-mie/galago/releases/latest) From there, you can download the binaries and add them to your system's PATH variable.
 
-If you prefer downloading via the cli, you can use the following command to download the latest Galago binary on **Windows**:
+If you prefer downloading via the cli, you can use the following command to download the latest Galago binary on **Windows** (amd64):
 
 ```sh
-irm -Uri https://github.com/jere-mie/galago/releases/latest/download/galago.exe -O galago.exe
+irm -Uri https://github.com/jere-mie/galago/releases/latest/download/galago_windows_amd64.exe -O galago.exe
 ```
 
-and the following command on **Linux**:
+the following command on **Linux** (amd64):
 
 ```sh
-curl -LO https://github.com/jere-mie/galago/releases/latest/download/galago
+curl -L https://github.com/jere-mie/galago/releases/latest/download/galago_linux_amd64 -o galago && chmod +x galago
+```
+
+the following on **MacOS** (arm64, Apple Silicon):
+
+```sh
+curl -L https://github.com/jere-mie/galago/releases/latest/download/galago_darwin_arm64 -o galago && chmod +x galago
+```
+
+and the following on **MacOS** (amd64, Intel):
+
+```sh
+curl -L https://github.com/jere-mie/galago/releases/latest/download/galago_darwin_amd64 -o galago && chmod +x galago
 ```
 
 Galago is a lightweight, static binary (under 10Mb), so if you prefer you can install it in your project's directory and run it with `./galago` instead of adding it to your PATH.

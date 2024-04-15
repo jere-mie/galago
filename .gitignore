@@ -6,6 +6,7 @@ content/
 static/
 base/
 macros/
+bin/
 galago
 galago.exe
 
