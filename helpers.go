@@ -1,8 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"io"
+	"log"
 	"os"
 	"path/filepath"
 
@@ -64,34 +64,34 @@ func copyFile(src, dst string) error {
 
 func process_template(path string, info os.FileInfo, err error) error {
 	if err != nil {
-		fmt.Printf("Error accessing path %q: %v\n", path, err)
+		log.Printf("Error accessing path %q: %v\n", path, err)
 		return nil
 	}
 	if !info.IsDir() {
 		// Read file contents
 		content, err := os.ReadFile(path)
 		if err != nil {
-			fmt.Printf("Error reading file %q: %v\n", path, err)
+			log.Printf("Error reading file %q: %v\n", path, err)
 			return nil
 		}
 
 		// Parse the template
 		template, err := pongo2.FromString(string(content))
 		if err != nil {
-			fmt.Println("Error parsing template:", err)
+			log.Println("Error parsing template:", err)
 			return nil
 		}
 
 		// Render the template
 		outputString, err := template.Execute(nil)
 		if err != nil {
-			fmt.Println("Error rendering template:", err)
+			log.Println("Error rendering template:", err)
 			return nil
 		}
 
 		relativePath, err := filepath.Rel("pages", path)
 		if err != nil {
-			fmt.Printf("Error getting relative path for %q: %v\n", path, err)
+			log.Printf("Error getting relative path for %q: %v\n", path, err)
 			return nil
 		}
 		destPath := filepath.Join("public", relativePath)
@@ -99,15 +99,15 @@ func process_template(path string, info os.FileInfo, err error) error {
 		// Create the destination directory if it doesn't exist
 		destDir := filepath.Dir(destPath)
 		if err := os.MkdirAll(destDir, 0755); err != nil {
-			fmt.Printf("Error creating directory %q: %v\n", destDir, err)
+			log.Printf("Error creating directory %q: %v\n", destDir, err)
 			return nil
 		}
 
 		if err := os.WriteFile(destPath, []byte(outputString), 0755); err != nil {
-			fmt.Printf("Error writing to file %q: %v\n", destPath, err)
+			log.Printf("Error writing to file %q: %v\n", destPath, err)
 		}
 
-		fmt.Printf("Page exported: %s\n", destPath)
+		log.Printf("Page exported: %s\n", destPath)
 
 	}
 	return nil

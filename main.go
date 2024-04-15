@@ -1,15 +1,43 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
 )
 
 func main() {
-	build()
-	serve()
+	if len(os.Args) < 2 {
+		log.Println("Building project...")
+		build()
+		return
+	}
+
+	// Extract the executable
+	executable := os.Args[0]
+
+	// Extract the command
+	command := os.Args[1]
+
+	// Handle different commands
+	switch command {
+	case "server", "serve":
+		log.Println("Building project...")
+		err := build()
+		if err != nil {
+			return
+		}
+		log.Println("Starting server...")
+		serve()
+	case "build":
+		log.Println("Building project...")
+		build()
+	default:
+		log.Println("Unknown command:", command)
+		log.Printf("Usage: %s [serve|build]", executable)
+		os.Exit(1)
+	}
 }
 
 func serve() {
@@ -20,32 +48,33 @@ func serve() {
 	http.Handle("/", fileServer)
 
 	// Start the server on port 1112
-	fmt.Println("Running webserver on http://localhost:1112")
+	log.Println("Running webserver on http://localhost:1112")
 	err := http.ListenAndServe(":1112", nil)
 	if err != nil {
 		panic(err)
 	}
 }
 
-func build() {
+func build() error {
 	// clear ./public directory before building site
 	if err := os.RemoveAll("./public"); err != nil {
-		fmt.Println("Error clearing ./public directory:", err)
-		return
+		log.Println("Error clearing ./public directory:", err)
+		return err
 	} else {
-		fmt.Println("Successfully cleared ./public directory")
+		log.Println("Successfully cleared ./public directory")
 	}
 
 	// recursively render all templates in ./pages directory
 	if err := filepath.Walk("pages/", process_template); err != nil {
-		fmt.Printf("Error walking the path './pages': %v\n", err)
-		return
+		log.Printf("Error walking the path './pages': %v\n", err)
+		return err
 	}
 
 	// copying ./static directory into ./public/static/
 	if err := copyDir("./static", "./public/static"); err != nil {
-		fmt.Println("Error copying static directory:", err)
+		log.Println("Error copying static directory:", err)
 	} else {
-		fmt.Println("Successfully copied ./static directory")
+		log.Println("Successfully copied ./static directory")
 	}
+	return nil
 }
