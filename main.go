@@ -8,8 +8,10 @@ import (
 )
 
 func main() {
+	// show startup text
+	greet()
+
 	if len(os.Args) < 2 {
-		log.Println("Building project...")
 		build()
 		return
 	}
@@ -29,13 +31,26 @@ func main() {
 			return
 		}
 		log.Println("Starting server...")
-		serve()
+		go serve()
 	case "build":
 		log.Println("Building project...")
 		build()
+	case "new":
+		if len(os.Args) < 3 {
+			log.Printf("Not enough arguments for `%s new`\n", executable)
+			log.Printf("Usage: %s new [sitename]\n", executable)
+			os.Exit(1)
+		}
+		siteName := os.Args[2]
+		log.Printf("Creating new site \"%s\"\n", siteName)
+		if err := newSite(siteName); err != nil {
+			log.Printf("Error creating new site `%s`, %s\n", siteName, err)
+			return
+		}
+		log.Printf("Successfully created new site \"%s\"!\n\n", siteName)
 	default:
 		log.Println("Unknown command:", command)
-		log.Printf("Usage: %s [serve|build]", executable)
+		log.Printf("Usage: %s [serve|build]\n", executable)
 		os.Exit(1)
 	}
 }
@@ -56,6 +71,8 @@ func serve() {
 }
 
 func build() error {
+	log.Println("Building project...")
+
 	// clear ./public directory before building site
 	if err := os.RemoveAll("./public"); err != nil {
 		log.Println("Error clearing ./public directory:", err)

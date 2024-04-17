@@ -1,6 +1,8 @@
+//go:generate go generate
 package main
 
 import (
+	_ "embed"
 	"io"
 	"log"
 	"os"
@@ -8,6 +10,9 @@ import (
 
 	"github.com/flosch/pongo2/v6"
 )
+
+//go:embed embed/greeting.txt
+var greeting string
 
 func copyDir(src, dst string) error {
 	// Create destination directory if it does not exist
@@ -111,4 +116,8 @@ func process_template(path string, info os.FileInfo, err error) error {
 
 	}
 	return nil
+}
+
+func greet() {
+	log.Printf("\n%s\n", greeting)
 }
