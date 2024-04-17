@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -8,10 +9,9 @@ import (
 )
 
 func main() {
-	// show startup text
-	greet()
 
 	if len(os.Args) < 2 {
+		greet()
 		build()
 		return
 	}
@@ -25,6 +25,7 @@ func main() {
 	// Handle different commands
 	switch command {
 	case "server", "serve":
+		greet()
 		log.Println("Building project...")
 		err := build()
 		if err != nil {
@@ -33,14 +34,18 @@ func main() {
 		log.Println("Starting server...")
 		go serve()
 	case "build":
+		greet()
 		log.Println("Building project...")
 		build()
+	case "version":
+		fmt.Println(getVersion())
 	case "new":
 		if len(os.Args) < 3 {
 			log.Printf("Not enough arguments for `%s new`\n", executable)
 			log.Printf("Usage: %s new [sitename]\n", executable)
 			os.Exit(1)
 		}
+		greet()
 		siteName := os.Args[2]
 		log.Printf("Creating new site \"%s\"\n", siteName)
 		if err := newSite(siteName); err != nil {
@@ -50,7 +55,7 @@ func main() {
 		log.Printf("Successfully created new site \"%s\"!\n\n", siteName)
 	default:
 		log.Println("Unknown command:", command)
-		log.Printf("Usage: %s [serve|build]\n", executable)
+		log.Printf("Usage: %s [serve|build|version|new <sitename>]\n", executable)
 		os.Exit(1)
 	}
 }

@@ -14,6 +14,9 @@ import (
 //go:embed embed/greeting.txt
 var greeting string
 
+//go:embed version.txt
+var version string
+
 func copyDir(src, dst string) error {
 	// Create destination directory if it does not exist
 	if err := os.MkdirAll(dst, 0755); err != nil {
@@ -120,4 +123,8 @@ func process_template(path string, info os.FileInfo, err error) error {
 
 func greet() {
 	log.Printf("\n%s\n", greeting)
+}
+
+func getVersion() string {
+	return version
 }

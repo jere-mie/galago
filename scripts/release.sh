@@ -10,8 +10,8 @@ if [ $# -eq 0 ]; then
     exit 1
 fi
 
-# Extract the tag from command-line arguments
-TAG=$1
+# Extract the tag from version.txt
+TAG=$(<version.txt)
 
 # Create a release
 gh release create $TAG \
