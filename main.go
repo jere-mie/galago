@@ -6,36 +6,34 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"time"
 )
 
 func main() {
-
 	if len(os.Args) < 2 {
 		greet()
 		build()
 		return
 	}
 
-	// Extract the executable
 	executable := os.Args[0]
-
-	// Extract the command
 	command := os.Args[1]
 
-	// Handle different commands
 	switch command {
 	case "server", "serve":
 		greet()
-		log.Println("Building project...")
-		err := build()
-		if err != nil {
+		if err := build(); err != nil {
 			return
 		}
-		log.Println("Starting server...")
-		go serve()
+		if len(os.Args) > 2 && os.Args[2] == "dev" {
+			log.Println("Starting server in dev mode, project will rebuild every 2 seconds...")
+			go serveAndAutoRebuild()
+		} else {
+			log.Println("Starting server...")
+		}
+		serve()
 	case "build":
 		greet()
-		log.Println("Building project...")
 		build()
 	case "version":
 		fmt.Println(getVersion())
@@ -61,13 +59,8 @@ func main() {
 }
 
 func serve() {
-	// Use http.FileServer to serve files from the "./public" directory
 	fileServer := http.FileServer(http.Dir("./public"))
-
-	// Handle all requests with the file server
 	http.Handle("/", fileServer)
-
-	// Start the server on port 1112
 	log.Println("Running webserver on http://localhost:1112")
 	err := http.ListenAndServe(":1112", nil)
 	if err != nil {
@@ -77,26 +70,35 @@ func serve() {
 
 func build() error {
 	log.Println("Building project...")
-
-	// clear ./public directory before building site
 	if err := os.RemoveAll("./public"); err != nil {
 		log.Println("Error clearing ./public directory:", err)
 		return err
-	} else {
-		log.Println("Successfully cleared ./public directory")
 	}
+	log.Println("Successfully cleared ./public directory")
 
-	// recursively render all templates in ./pages directory
-	if err := filepath.Walk("pages/", process_template); err != nil {
+	if err := filepath.Walk("pages/", processTemplate); err != nil {
 		log.Printf("Error walking the path './pages': %v\n", err)
 		return err
 	}
 
-	// copying ./static directory into ./public/static/
 	if err := copyDir("./static", "./public/static"); err != nil {
 		log.Println("Error copying static directory:", err)
 	} else {
 		log.Println("Successfully copied ./static directory")
 	}
 	return nil
+}
+
+func serveAndAutoRebuild() {
+	ticker := time.NewTicker(2 * time.Second)
+	defer ticker.Stop()
+
+	for range ticker.C {
+		log.Println("Rebuilding project...")
+		if err := build(); err != nil {
+			log.Println("Error rebuilding project:", err)
+		} else {
+			log.Println("Project rebuilt successfully.")
+		}
+	}
 }

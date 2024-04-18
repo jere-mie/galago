@@ -70,7 +70,7 @@ func copyFile(src, dst string) error {
 	return nil
 }
 
-func process_template(path string, info os.FileInfo, err error) error {
+func processTemplate(path string, info os.FileInfo, err error) error {
 	if err != nil {
 		log.Printf("Error accessing path %q: %v\n", path, err)
 		return nil

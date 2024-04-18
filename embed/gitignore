@@ -2,3 +2,4 @@ galago.exe
 galago
 *.exe
 node_modules/
+public/
